@@ -1,0 +1,110 @@
+{% extends 'quizApp/base.html' %}
+
+{% block title %} quiz {% endblock %}
+
+{% block content %}
+
+    {% if user.is_authenticated %}
+        <div class="logout">
+            <form method="POST" id="logout-form">
+                {% csrf_token %}
+                <button type="submit">Sign out</button>
+            </form>
+        </div>
+        {% if completed %}
+            <div class="main">
+                <div class="card">
+                    <div class="card-title">
+                        <h2 class="error-msg">Attempted</h2>
+                    </div>
+                    <div class="card-body">
+                        <p> You have already attempted this quiz.<br>Your score is <b>{{score}}</b> out of <b>{{totalscore}}</b></p>
+                    </div>
+                </div>
+            </div>        
+        {% else %}
+            <div class="quiz">
+                <div class="card w-75">
+                    <div class="card-title">
+                        <div class="flex-between">
+                            <h2 class="ml-50">{{quiz.name}}</h2>
+                            <div class="score">score: <span id="score">0</span></div>
+                            <div class="timer mr-50"></div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-body flex">
+                            <div class="questions-container w-75">
+                                    <div class="questions-main">
+                                        {% for item in list %}
+                                            <div class="question-div" id="question-div{{item.index}}">
+                                                <form id="quizform{{item.index}}" method="POST" class="quizform">
+                                                    {% csrf_token %}
+                                                    <div class="question">
+                                                        <h3>{{ item.index}}. {{item.question}}</h3>
+                                                    </div>
+                                                    <div class="options-main">
+                                                        <ul>
+                                                            {% for option in item.options %}
+                                                                <li>
+                                                                    <input type="checkbox" class="option-checkbox opt{{item.id}}" id="{{option.id}}" value='{{option.id}}'>
+                                                                    <div class="option-background" id="ob-{{option.id}}"></div>
+                                                                    <label for="{{option.id}}">{{option}}</label>
+                                                                    
+                                                                </li>
+                                                            {% endfor %}
+                                                        </ul>
+                                                    </div>
+                                                    <p class="option-error"></p>
+                                                    <button class="btn answer_submit q-{{item.id}}" id="answer_submit" type="submit" data-quizid="{{quiz.id}}" data-qid="{{item.id}}" data-qindex="{{item.index}}">Submit</button>
+                                                </form>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                <div class="question-bottom-bar flex-around mr-50">
+                                    <button class="btn disp-none" id="prev-btn" onclick="previousQuestion('{{length}}')">Previous</button>
+                                    <button class="btn" id="next-btn" onclick="nextQuestion('{{length}}')">Next</button>
+                                    <form method="POST" class="quiz_complete_form" id="quiz_complete_form">
+                                        {% csrf_token %}
+                                        <button class="btn quiz_complete_form" type="submit">Submit</button>
+                                        <input type="hidden" id="quizid" value="{{quiz.id}}">
+                                    </form>
+                                </div>  
+                                <div class="question-nav">
+                                    <p><span id="current-index-number"></span> of {{length}}</p>
+                                </div>
+                            </div>
+                            <div class="side-bar">
+                                <div class="question-info">
+                                    {% for item in lengtharray %}
+                                        <div class="question-info-number " id="question-info-number-{{item}}">
+                                            {{item}}
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    {% else %}
+        <div class="main">
+            <div class="card">
+                <div class="card-title">
+                    <h2 class="error-msg">Error</h2>
+                </div>
+                <div class="card-body">
+                    <p > You are not Authenticated. please login <a href="/">here</a></p>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        setInterval(countTimer, 1000);
+    </script>
+{% endblock %}

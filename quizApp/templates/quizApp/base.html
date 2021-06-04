@@ -1,0 +1,40 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %} Quiz App {% endblock %}</title>
+    <link rel="stylesheet"  type="text/css" href="{% static 'quizApp/css/styles.css' %}">
+</head>
+<body>
+
+    <div class="container">
+        {% block content %} {% endblock %}  
+    </div>
+
+    <div class="alert-container">
+        <div class="alert-main">
+            <div class="card w-25">
+                <div class="card-title" id="alert-title"></div>
+                <div class="card-body">
+                    <div class="final_score" id="final_score"></div>
+                </div>
+                <div class="card-actions">
+                    <!-- <button class="btn btn-sm" >Ok</button>
+                    <button class="btn btn-sm" onclick="closeAlert()">Ok</button> -->
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    
+    <script src="{% static 'quizApp/js/main.js' %}"></script>
+    <script src="{% static 'quizApp/js/questionChange.js' %}"></script>
+    <script src="{% static 'quizApp/js/checkAnswers.js' %}"></script>
+    <script src="{% static 'quizApp/js/timer.js' %}"></script>
+    {% block scripts %}
+    {% endblock %}
+
+</body>
+</html>

@@ -1,0 +1,75 @@
+{% extends 'quizApp/base.html' %}
+
+{% block title %} Sign in {% endblock %}
+
+{% block content %}
+
+    <div class="main">
+        <div class="card w-25" >
+            <div class="card-title">
+                <h2>Sign up</h2> 
+            </div>
+            <div class="card-body">
+                <form id="signup-form" method="POST">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="username">Username:</label><br>
+                        <input type="text" id="username">
+                        <p class="error-msg ml-5" id="username-error"></p>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password:</label><br>
+                        <input type="password" id="password">
+                        <p class="error-msg ml-5" id="password-error"></p>
+                    </div>
+                    <div class="flex-between">
+                        <button type="submit" class="btn">Sign up</button>
+                        <a href="/signin">Sign in</a>
+                    </div>
+                    <div class="success-div">
+                        <p id="success-msg">success</p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        
+        $('#signup-form').submit((e)=>{
+            e.preventDefault()
+            let username = $('#username').val()
+            let password = $('#password').val()
+            $.ajax({
+                url:'http://127.0.0.1:8000/api/signup',
+                data: {"username":username,"password":password},
+                dataType:'json',
+                method: 'POST',
+                success:(res)=>{
+                    $('#username-error').html("")
+                    $('#password-error').html("")
+                    if(res.code == "EU"){
+                        console.log("user");
+                        $('#username-error').html(res.message)
+                    }
+
+                    if(res.code == "EP"){
+                        $('#password-error').html(res.message)
+                    }
+
+                    if(res.code == 'SUS'){
+                        $('.success-div').css('display','block')
+                        $('#success-msg').html(res.message)
+                        setTimeout(()=>{
+                            $('.success-div').css('display','none')
+                        },1000)
+                    }
+                }
+            })
+        })
+
+    </script>
+{% endblock %}
